@@ -19,10 +19,12 @@ $('#login form').submit(function () {
 });
 
 socket.on('new player',function(user){
+    $('#messages').append($('<li>').text(user.pseudo+" just joined"));
     drawUser(user);
 });
 
 socket.on('disconnect user', function(user){
+    $('#messages').append($('<li>').text(user.pseudo+" just left"));
     eraseUser(user,true);
 });
 

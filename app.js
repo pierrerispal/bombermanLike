@@ -4,7 +4,7 @@ var express = require('express'),
     http = require('http'),
     server = http.createServer(app),
     io = require('socket.io')(server),
-    port = process.env.PORT || 3000;
+    port = process.env.PORT || 8080;
 
 //setting the game variables
 var gridX=20,
@@ -74,12 +74,12 @@ io.on('connection', function(socket){
     socket.on('move', function (user) {
         
         //We do a first test for out of bounds, if its okey, we tell everyone the player moved
-        if(user.cooX<=gridX && user.cooX>0 &&user.cooY<=gridY && user.cooY>0){
-            console.log(user.pseudo+" just moved from "+user.oldX+"-"+user.oldY+" to "+user.cooX+"-"+user.cooY);
+        //if(user.cooX<=gridX && user.cooX>0 &&user.cooY<=gridY && user.cooY>0){
+            //console.log(user.pseudo+" just moved from "+user.oldX+"-"+user.oldY+" to "+user.cooX+"-"+user.cooY);
             var i = userList.indexOf(socket);
             userList[i].user=user;
             io.emit('move',user);
-        }
+        //}
     });
 });
 

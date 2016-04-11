@@ -1,7 +1,9 @@
 var socket = io(),
     chatTitle = "Bomberman",
     logged=false,
-    global_user;
+    global_user
+    global_x=0,
+    global_y=0;
 
 $('#login form').submit(function () {
     if($('#pseudo').val().trim()!=""){
@@ -32,13 +34,13 @@ socket.on('move',function(user){
 //initialisation of the board game
 socket.on('init', function(send){
     generateTable(send.gridX,send.gridY);
+    global_x=send.gridX;
+    global_y=send.gridY;
     global_user=send.user;
     logged=true;
 });
 
 function generateTable(larg,long){
-    larg = larg;
-    long = long;
     var html='';
     for(var i=1; i<(long+1);i++)
     {
@@ -72,32 +74,44 @@ document.addEventListener('keydown',function(event) {
             console.log('left');
             global_user['oldX']=global_user.cooX;
             global_user['oldY']=global_user.cooY;
-            global_user.cooX=global_user.cooX-1;
-            socket.emit('move',global_user);
+            if(global_user.cooX-1<1){                
+            }else{
+                global_user.cooX=global_user.cooX-1;
+                socket.emit('move',global_user);
+            }      
         }        
     }else if(event.keyCode == 39 || event.keyCode == 68){
         if(logged){
-            console.log('right'); 
+            console.log('right');
             global_user['oldX']=global_user.cooX;
             global_user['oldY']=global_user.cooY;
-            global_user.cooX=global_user.cooX+1;
-            socket.emit('move',global_user);
+            if(global_user.cooX+1>global_x){                
+            }else{
+                global_user.cooX=global_user.cooX+1;
+                socket.emit('move',global_user);
+            }            
         }        
     }else if(event.keyCode == 38 || event.keyCode == 90){
         if(logged){
             console.log('up');  
             global_user['oldX']=global_user.cooX;
             global_user['oldY']=global_user.cooY;
-            global_user.cooY=global_user.cooY-1;
-            socket.emit('move',global_user);
+            if(global_user.cooY-1<1){                
+            }else{
+                global_user.cooY=global_user.cooY-1;
+                socket.emit('move',global_user);
+            }  
         }        
     }else if(event.keyCode == 40 || event.keyCode == 83){
         if(logged){
             console.log('down');
             global_user['oldX']=global_user.cooX;
             global_user['oldY']=global_user.cooY;
-            global_user.cooY=global_user.cooY+1;
-            socket.emit('move',global_user);
+            if(global_user.cooY+1>global_y){                
+            }else{
+                global_user.cooY=global_user.cooY+1;
+                socket.emit('move',global_user);
+            }  
         }        
     }
 }); 

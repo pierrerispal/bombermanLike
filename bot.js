@@ -24,7 +24,7 @@ var botMessage=function(text,allClients){
             break;
         
     }
-  return {pseudo,channel,msg};
+  return {pseudo:pseudo,channel:channel,msg:msg};
 }
 
 exports.command = command;

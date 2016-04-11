@@ -40,93 +40,26 @@ body {
     border-radius: 2px;
 }
 
-#chat {
+#scene {
     display: none;
-    height: 100%;
+    top:10px;
+    left : 10px;
+    position: relative;
+}
+
+td{    
+    width:32px;
+    height:32px;
+}
+tr,td,table{
+    margin:0;
     padding:0;
+    border-collapse: collapse;                
+    margin-bottom: 10px;
 }
-
-#conversation {
-    width: 80%;
-    height: 100%;
-    display: inline-block;
-    padding: 0 0 40px 0;
+.char{
+    background-color: red;
 }
-
-#messages {
-    list-style-type: none;
-    margin: 0;
-    overflow-y: scroll;
-    height: 100%;
-    white-space: nowrap;
+.empty{
+    background-color: white;
 }
-#messages li {
-    padding: 5px 10px;
-    white-space: normal;
-    word-break: break-all;
-}
-#messages li:nth-child(odd) {
-    background: #eee;
-}
-#messages li.connection {
-    background-color: #000066;
-    color:white;
-}
-#messages li.unconnection {
-    background-color: #660000;
-    color:white;
-}
-
-#chat form{
-    background-color: #F3F3F3;
-    height: 40px;
-    box-shadow: 0px 0px 5px #C6C6C6;
-}
-
-#chat form *{
-    padding: 0;
-    margin: 0;
-    border-radius: 0;
-}
-
-
-
-#chat form button,
-#chat form input{
-    padding: 5px;
-    height: 40px;
-}
-
-#list {
-    display: inline-block;
-    position: fixed;
-    height: 100%;
-    background: #F1F1F1;
-    width: 20%;
-    overflow: hidden;
-    padding: 0;
-}
-
-#list #expand{
-    z-index: 1000;
-}
-
-#list.open{
-    position: absolute;
-    width: 80%;
-    right: 0;
-}
-
-#list #listBlock{
-    height: 100%;
-    margin: -50px 0 0;
-    width: 100%;
-    padding: 0;
-}
-
-#list #userList{
-    overflow-y: scroll;
-    height: 100%;
-    padding: 50px 0 0;
-}
-

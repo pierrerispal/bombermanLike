@@ -1,0 +1,132 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+html,body{
+    height: 100%;
+}
+body {
+    font: 13px Helvetica, Arial;
+    overflow: hidden;
+}
+
+#login{
+    height: 175px;
+    top: calc(50% - 175px);
+    margin: auto;
+    float: none;
+    padding: 0;
+}
+
+#login form {
+    background-color: #EFEFEF;
+    position: absolute;
+    bottom: inherit;
+    width: 100%;
+    border-radius: 3px;
+    padding: 10px;
+    border: 1px solid #D0D0D0;
+    box-shadow: 2px 3px 10px grey;
+}
+
+#login form input{
+    border-radius: 2px;
+    box-shadow: inset 0px 0px 5px #C2C2C2;
+}
+#login form button{
+    width: 100px;
+    padding: 10px;
+    border-radius: 2px;
+}
+
+#chat {
+    display: none;
+    height: 100%;
+    padding:0;
+}
+
+#conversation {
+    width: 80%;
+    height: 100%;
+    display: inline-block;
+    padding: 0 0 40px 0;
+}
+
+#messages {
+    list-style-type: none;
+    margin: 0;
+    overflow-y: scroll;
+    height: 100%;
+    white-space: nowrap;
+}
+#messages li {
+    padding: 5px 10px;
+    white-space: normal;
+    word-break: break-all;
+}
+#messages li:nth-child(odd) {
+    background: #eee;
+}
+#messages li.connection {
+    background-color: #000066;
+    color:white;
+}
+#messages li.unconnection {
+    background-color: #660000;
+    color:white;
+}
+
+#chat form{
+    background-color: #F3F3F3;
+    height: 40px;
+    box-shadow: 0px 0px 5px #C6C6C6;
+}
+
+#chat form *{
+    padding: 0;
+    margin: 0;
+    border-radius: 0;
+}
+
+
+
+#chat form button,
+#chat form input{
+    padding: 5px;
+    height: 40px;
+}
+
+#list {
+    display: inline-block;
+    position: fixed;
+    height: 100%;
+    background: #F1F1F1;
+    width: 20%;
+    overflow: hidden;
+    padding: 0;
+}
+
+#list #expand{
+    z-index: 1000;
+}
+
+#list.open{
+    position: absolute;
+    width: 80%;
+    right: 0;
+}
+
+#list #listBlock{
+    height: 100%;
+    margin: -50px 0 0;
+    width: 100%;
+    padding: 0;
+}
+
+#list #userList{
+    overflow-y: scroll;
+    height: 100%;
+    padding: 50px 0 0;
+}
+

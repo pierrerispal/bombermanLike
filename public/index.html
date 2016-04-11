@@ -1,0 +1,67 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Chat Paleur</title>
+    <link href="/css/style.css" rel="stylesheet" type="text/css">
+    <link href="lib/boostrap/css/bootstrap.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+<div class="col-sm-10 col-xs-12" id="login">
+    <form action="" class="form-horizontal">
+        <div class="form-group col-sm-12 col-xs-12">
+            <label class="control-label col-sm-2" for="pseudo">Pseudo</label>
+            <div class="col-sm-8 col-xs-12">
+                <input class="form-control" id="pseudo" autocomplete="off" required>
+            </div>
+        </div>
+        <div class="form-group col-sm-12 col-xs-12">
+            <label class="control-label col-sm-2" for="channel">Channel</label>
+            <div class="col-sm-8 col-xs-12">
+                <input class="form-control" id="channel" autocomplete="off" required>
+            </div>
+        </div>
+        <div class="form-group col-sm-12 col-xs-12">
+            <div class="col-sm-6">
+                <button class="btn btn-primary">Connexion</button>
+            </div>
+        </div>
+    </form>
+</div>
+<div class="col-sm-12" id="chat">
+    <div class="col-sm-10" id="conversation">
+        <ul id="messages"></ul>
+        <form action="" class="form-horizontal">
+            <div class="form-group col-sm-10 col-xs-10">
+                <div class="col-sm-12">
+                    <input class="form-control" id="m" autocomplete="off" required/>
+                </div>
+            </div>
+            <div class="form-group col-sm-2 col-xs-2">
+                <div class="col-sm-12">
+                    <button class="btn btn-primary col-sm-12 col-xs-12">Send</button>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="col-sm-2" id="list">
+        <h1 id="channel-title"></h1>
+        <div id="expand" class="col-sm-12 col-xs-12">
+            <div class="btn btn-default">
+                <span id="expandList" class="glyphicon glyphicon-resize-horizontal" aria-hidden="true"></span>
+            </div>
+        </div>
+        <div id="listBlock" class="col-sm-12 col-xs-12">            
+            <ul id="userList" class="list-group">
+
+            </ul>
+        </div>
+    </div>
+</div>
+<script src="/lib/jquery/jquery.js"></script>
+<script src="/lib/boostrap/js/bootstrap.js"></script>
+<script src="/socket.io/socket.io.js"></script>
+<script src="/js/index.js"></script>
+</body>
+</html>

@@ -57,9 +57,6 @@ tr,td,table{
     border-collapse: collapse;                
     margin-bottom: 10px;
 }
-.char{
-    background-color: red;
-}
 .empty{
     background-color: white;
 }

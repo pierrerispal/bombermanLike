@@ -1,14 +1,13 @@
 var socket = io(),
-    newMessagesCount = 0,
-    channel='';
-    chatTitle = "Bomberman";
+    chatTitle = "Bomberman",
+    logged=false,
+    global_user;
 
 $('#login form').submit(function () {
     if($('#pseudo').val().trim()!=""){
         $('#login').css('display','none');
         $('#scene').css('display','block');
         var pseudo = $('#pseudo').val().trim();
-        $('#channel-title').append('#'+channel);
         var user = {
             pseudo:pseudo
         };
@@ -17,21 +16,24 @@ $('#login form').submit(function () {
     return false;
 });
 
-socket.on('connect user', function(user){
-    
-});
-
 socket.on('new player',function(user){
     drawUser(user);
 });
 
 socket.on('disconnect user', function(user){
-    
+    eraseUser(user,true);
+});
+
+socket.on('move',function(user){
+    drawUser(user);
+    eraseUser(user,false);
 });
 
 //initialisation of the board game
 socket.on('init', function(send){
     generateTable(send.gridX,send.gridY);
+    global_user=send.user;
+    logged=true;
 });
 
 function generateTable(larg,long){
@@ -51,6 +53,53 @@ function generateTable(larg,long){
     $('#table').prepend(html); 
 }
 function drawUser(user){
-    var idModif=user.cooX+"-"+user.cooY;    
-    $('#'+idModif).toggleClass('char empty');
+    var idModif=user.cooX+"-"+user.cooY;  
+    $('#'+idModif).css("background-color",user.color);
+    $('#'+idModif).toggleClass('char empty');    
 }
+function eraseUser(user,deco){
+    user.color="white";
+    if(!deco){
+        user.cooX=user.oldX;
+        user.cooY=user.oldY;
+    }
+    drawUser(user);
+}
+document.addEventListener('keydown',function(event) {
+    //@TODO for each check that we are logged
+    if(event.keyCode==37 || event.keyCode == 81){
+        if(logged){
+            console.log('left');
+            global_user['oldX']=global_user.cooX;
+            global_user['oldY']=global_user.cooY;
+            global_user.cooX=global_user.cooX-1;
+            socket.emit('move',global_user);
+        }        
+    }else if(event.keyCode == 39 || event.keyCode == 68){
+        if(logged){
+            console.log('right'); 
+            global_user['oldX']=global_user.cooX;
+            global_user['oldY']=global_user.cooY;
+            global_user.cooX=global_user.cooX+1;
+            socket.emit('move',global_user);
+        }        
+    }else if(event.keyCode == 38 || event.keyCode == 90){
+        if(logged){
+            console.log('up');  
+            global_user['oldX']=global_user.cooX;
+            global_user['oldY']=global_user.cooY;
+            global_user.cooY=global_user.cooY-1;
+            socket.emit('move',global_user);
+        }        
+    }else if(event.keyCode == 40 || event.keyCode == 83){
+        if(logged){
+            console.log('down');
+            global_user['oldX']=global_user.cooX;
+            global_user['oldY']=global_user.cooY;
+            global_user.cooY=global_user.cooY+1;
+            socket.emit('move',global_user);
+        }        
+    }
+}); 
+
+

@@ -58,7 +58,8 @@ tr,td,table{
     margin-bottom: 10px;
 }
 .empty{
-    background-color: green;
+    background:url('../img/x64/texture2.png') 0 0 no-repeat;
+    background-position: -64px 0px;
 }
 #console{
     background-color: black;

@@ -61,8 +61,27 @@ function generateTable(larg,long){
     $('#table').prepend(html); 
 }
 function drawUser(user){
-    var idModif=user.cooX+"-"+user.cooY;  
-    $('#'+idModif).css("background","url('../img/x64/"+user.char+".png') 0 0 no-repeat");
+    var position='0';
+    //need to check the direction
+    if(user.cooX<user.oldX){
+        //he went left
+        position='-192';
+    }else if(user.cooX>user.oldX){
+        //he went right
+        position='-64';
+    }else if(user.cooY<user.oldY){
+        //he went up
+        position='-128';
+    }else{ 
+        position=position;
+    }
+    
+    
+    var idModif=user.cooX+"-"+user.cooY;
+    
+    //$('#'+idModif).css("background","url('../img/x64/"+user.char+".png') 0 0 no-repeat");
+    $('#'+idModif).css("background","url('../img/x64/defaultchar.png') "+position+"px 0px no-repeat");
+    //$('#'+idModif).css("background-position",position+"px 0px;")
     $('#'+idModif).toggleClass('char empty');    
 }
 

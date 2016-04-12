@@ -80,7 +80,7 @@ function drawUser(user){
     var idModif=user.cooX+"-"+user.cooY;
     
     //$('#'+idModif).css("background","url('../img/x64/"+user.char+".png') 0 0 no-repeat");
-    $('#'+idModif).css("background","url('../img/x64/defaultchar.png') "+position+"px 0px no-repeat");
+    $('#'+idModif).css("background","url('../img/x64/"+user.char+".png') "+position+"px 0px no-repeat");
     //$('#'+idModif).css("background-position",position+"px 0px;")
     $('#'+idModif).toggleClass('char empty');    
 }

@@ -27,9 +27,7 @@ io.on('connection', function(socket){
             console.log(user.pseudo+" just joined the game");
             //at this point the user only have a nickname so we need to give him new propreties
             var textures = [
-                'char1',
-                'char2',
-                'char3'
+                'char1'
             ];
             
             var posX=2;

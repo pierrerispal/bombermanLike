@@ -30,7 +30,8 @@ io.on('connection', function(socket){
                 'char1',
                 'char2',
                 'char3',
-                'char4'
+                'char4',
+                'char5'
             ];
             
             var posX=2;

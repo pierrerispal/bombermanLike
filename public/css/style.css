@@ -48,8 +48,8 @@ body {
 }
 
 td{    
-    width:32px;
-    height:32px;
+    width:64px;
+    height:64px;
 }
 tr,td,table{
     margin:0;
@@ -58,10 +58,23 @@ tr,td,table{
     margin-bottom: 10px;
 }
 .empty{
-    background-color: white;
+    background-color: green;
 }
 #console{
     background-color: black;
     color: white;
     position: relative;
+}
+
+.undestructible{
+    background:url('../img/x64/texture2.png') 0 0 no-repeat;
+    background-position: 0px 0px;
+}
+.destructible{
+    background:url('../img/x64/texture2.png') 0 0 no-repeat;
+    background-position: -128px 0px;
+}
+.floor{
+    background:url('../img/x64/texture2.png') 0 0 no-repeat;
+    background-position: -64px 0px;
 }

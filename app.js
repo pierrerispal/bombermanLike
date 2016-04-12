@@ -7,8 +7,8 @@ var express = require('express'),
     port = process.env.PORT || 8080;
 
 //setting the game variables
-var gridX=20,
-    gridY=15,
+var gridX=25,
+    gridY=13,
     userList = [];
 
 //Run the server
@@ -26,20 +26,23 @@ io.on('connection', function(socket){
         if(user.pseudo!="" && user.pseudo!=""){
             console.log(user.pseudo+" just joined the game");
             //at this point the user only have a nickname so we need to give him new propreties
-            var colors = [
-                'red',
-                'blue',
-                'green',
-                'black',
-                'pink'
+            var textures = [
+                'char1',
+                'char2',
+                'char3'
             ];
-            posX=getRandomInt(1,gridX);
-            posY=getRandomInt(1,gridY);
-            color=getRandomInt(1,colors.length);
+            
+            var posX=2;
+            var posY=2;
+            while(posX%2==0 && posY%2==0){
+                posX=getRandomInt(1,gridX);
+                posY=getRandomInt(1,gridY);
+            }
+            
+            texture=getRandomInt(0,textures.length-1);
             user["cooX"]=posX;
             user["cooY"]=posY;
-            user["color"]=colors[color];
-            
+            user["char"]=textures[texture];
             socket.user = user;
             
             //the init draw the play grid

@@ -116,48 +116,48 @@ document.addEventListener('keydown',function(event) {
             //left
             global_user['oldX']=global_user.cooX;
             global_user['oldY']=global_user.cooY;
-            var idModif=global_user.cooX+"-"+global_user.cooY;
-            $('#'+idModif).css("background","url('../img/x64/"+global_user.char+".png') -192px 0px no-repeat");
             if(checkDestination(global_user.cooX-1,global_user.cooY)){
                 global_user.cooX=global_user.cooX-1;
                 socket.emit('move',global_user);
             }
+            var idModif=global_user.cooX+"-"+global_user.cooY;
+            $('#'+idModif).css("background","url('../img/x64/"+global_user.char+".png') -192px 0px no-repeat");
         }        
     }else if(event.keyCode == 39 || event.keyCode == 68){
         if(logged){
             //right
             global_user['oldX']=global_user.cooX;
             global_user['oldY']=global_user.cooY;
-            var idModif=global_user.cooX+"-"+global_user.cooY;
-            $('#'+idModif).css("background","url('../img/x64/"+global_user.char+".png') -64px 0px no-repeat");
             if(checkDestination(global_user.cooX+1,global_user.cooY)){
                 global_user.cooX=global_user.cooX+1;
                 socket.emit('move',global_user);
             }
+            var idModif=global_user.cooX+"-"+global_user.cooY;
+            $('#'+idModif).css("background","url('../img/x64/"+global_user.char+".png') -64px 0px no-repeat");
         }        
     }else if(event.keyCode == 38 || event.keyCode == 90){
         if(logged){
             //up
             global_user['oldX']=global_user.cooX;
             global_user['oldY']=global_user.cooY;
-            var idModif=global_user.cooX+"-"+global_user.cooY;
-            $('#'+idModif).css("background","url('../img/x64/"+global_user.char+".png') -128px 0px no-repeat");
             if(checkDestination(global_user.cooX,global_user.cooY-1)){
                 global_user.cooY=global_user.cooY-1;
                 socket.emit('move',global_user);
             } 
+            var idModif=global_user.cooX+"-"+global_user.cooY;
+            $('#'+idModif).css("background","url('../img/x64/"+global_user.char+".png') -128px 0px no-repeat");
         }        
     }else if(event.keyCode == 40 || event.keyCode == 83){
         if(logged){
             //down
             global_user['oldX']=global_user.cooX;
             global_user['oldY']=global_user.cooY;
-            var idModif=global_user.cooX+"-"+global_user.cooY;
-            $('#'+idModif).css("background","url('../img/x64/"+global_user.char+".png') -0px 0px no-repeat");
             if(checkDestination(global_user.cooX,global_user.cooY+1)){
                 global_user.cooY=global_user.cooY+1;
                 socket.emit('move',global_user);
             }
+            var idModif=global_user.cooX+"-"+global_user.cooY;
+            $('#'+idModif).css("background","url('../img/x64/"+global_user.char+".png') -0px 0px no-repeat");
         }        
     }
 }); 

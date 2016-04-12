@@ -27,7 +27,10 @@ io.on('connection', function(socket){
             console.log(user.pseudo+" just joined the game");
             //at this point the user only have a nickname so we need to give him new propreties
             var textures = [
-                'char1'
+                'char1',
+                'char2',
+                'char3',
+                'char4'
             ];
             
             var posX=2;
@@ -37,12 +40,12 @@ io.on('connection', function(socket){
                 posY=getRandomInt(1,gridY);
             }
             
-            texture=getRandomInt(0,textures.length-1);
+            texture=getRandomInt(0,textures.length);
             user["cooX"]=posX;
             user["cooY"]=posY;
             user["char"]=textures[texture];
             socket.user = user;
-            
+            console.log(texture+" - "+user.char);
             //the init draw the play grid
             var info = {
                 gridX:gridX,

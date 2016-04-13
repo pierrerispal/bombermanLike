@@ -36,7 +36,6 @@ io.on('connection', function(socket){
                 'char5',
                 'char6'
             ];
-            //var textures = ['char1'];
             
             var posX=2;
             var posY=2;
@@ -51,6 +50,7 @@ io.on('connection', function(socket){
             user["char"]=textures[texture];
             user["power"]=1;
             user["time"]=2;
+            user["life"]=3;
             
             socket.user = user;
             //the init draw the play grid

@@ -1,6 +1,6 @@
 var socket = io(),
     chatTitle = "Bomberman",
-    logged=false,
+    player=false,
     global_user
     global_x=0,
     global_y=0,
@@ -20,17 +20,28 @@ $('#login form').submit(function () {
 });
 
 socket.on('new player',function(user){
-    $('#messages').append($('<li>').text(user.pseudo+" just joined"));
-    drawUser(user);
+    if(user.player){
+        var str=" as a player";
+        drawUser(user);
+    }else{
+        var str=" as a spectator";
+    }
+    $('#messages').append($('<li>').text(user.pseudo+" just joined"+str));    
 });
 
 //initialisation of the board game
 socket.on('init', function(send){
     generateTable(send.gridX,send.gridY);
+    player=send.user.player;
     global_x=send.gridX;
     global_y=send.gridY;
-    global_user=send.user;
-    logged=true;
+    if(player){
+        global_user=send.user;
+        //console.log(global_user.char+global_user.cooX+global_user.cooY);
+        //drawUser(global_user);
+    }else{
+        //do the spectateur thing
+    }    
 });
 
 socket.on('disconnect user', function(user){
@@ -52,10 +63,10 @@ socket.on('new bomb',function(bomb){
 
 socket.on('bomb exploded',function(bomb){
     var idModif=bomb.cooX+"-"+bomb.cooY;
-    //$('#'+idModif).addClass("empty");
-    //$('#'+idModif).removeClass("bomb");
     $('#'+idModif).children(".con").children(".level3").toggleClass('bomb empty');
-    bombExplosion(bomb);
+    if(player){
+      bombExplosion(bomb);  
+    }    
 });
 
 function bombExplosion(bomb){
@@ -126,12 +137,8 @@ function eraseUser(user,deco){
         user.cooX=user.oldX;
         user.cooY=user.oldY;
     }
-    var idModif=user.cooX+"-"+user.cooY;  
-    //$('#'+idModif).css("background","url('../img/x64/texture2.png') -64px 0 no-repeat");
-    $('#'+idModif).prop("style",null);    
-    //$('#'+idModif).removeClass("char"); //@TODO: Will be used when the 6 chars will be 6 different classes :P
-    
-    //$('#'+idModif).toggleClass('char empty');
+    var idModif=user.cooX+"-"+user.cooY;
+    $('#'+idModif).prop("style",null);
     $('#'+idModif).children(".con").children(".level2").toggleClass(user.char+' empty');
 }
 
@@ -149,13 +156,12 @@ function checkDestination(posX,posY){
 function testClass(id,string,level){
     //var classes = $('#'+id).attr('class');
     var classes = $('#'+id).children(".con").children("."+level).attr('class');
-    console.log(classes);
     return (classes.indexOf(string)!=-1);
 }
 
 document.addEventListener('keydown',function(event) {
     if(event.keyCode==37 || event.keyCode == 81){
-        if(logged){
+        if(player){
             //left
             global_direction=-192;
             global_user['oldX']=global_user.cooX;
@@ -169,7 +175,7 @@ document.addEventListener('keydown',function(event) {
             }            
         }        
     }else if(event.keyCode == 39 || event.keyCode == 68){
-        if(logged){
+        if(player){
             //right
             global_direction=-64;
             global_user['oldX']=global_user.cooX;
@@ -185,7 +191,7 @@ document.addEventListener('keydown',function(event) {
             }
         }        
     }else if(event.keyCode == 38 || event.keyCode == 90){
-        if(logged){
+        if(player){
             global_direction=-128;
             //up
             global_user['oldX']=global_user.cooX;
@@ -201,7 +207,7 @@ document.addEventListener('keydown',function(event) {
             }
         }        
     }else if(event.keyCode == 40 || event.keyCode == 83){
-        if(logged){
+        if(player){
             //down
             global_direction=0;
             global_user['oldX']=global_user.cooX;
@@ -217,7 +223,7 @@ document.addEventListener('keydown',function(event) {
             }
         }   
     }else if(event.keyCode == 13 || event.keyCode == 69){
-        if(logged){
+        if(player){
             //enter OR e pressed to drop a bomb
             //need to check that there isnt already a bomb
             if(!testClass(global_user.cooX+"-"+global_user.cooY,"bomb",'level3')){

@@ -4,12 +4,14 @@ var express = require('express'),
     http = require('http'),
     server = http.createServer(app),
     io = require('socket.io')(server),
+    Repeat=require('repeat'),
     port = process.env.PORT || 8080;
 
 //setting the game variables
 var gridX=25,
     gridY=13,
-    userList = [];
+    userList = [],
+    bombList=[];
 
 //Run the server
 server.listen(port, function () {
@@ -34,6 +36,7 @@ io.on('connection', function(socket){
                 'char5',
                 'char6'
             ];
+            //var textures = ['char1'];
             
             var posX=2;
             var posY=2;
@@ -46,8 +49,10 @@ io.on('connection', function(socket){
             user["cooX"]=posX;
             user["cooY"]=posY;
             user["char"]=textures[texture];
+            user["power"]=1;
+            user["time"]=2;
+            
             socket.user = user;
-            console.log(texture+" - "+user.char);
             //the init draw the play grid
             var info = {
                 gridX:gridX,
@@ -57,7 +62,7 @@ io.on('connection', function(socket){
             
             //we send to the client all the other players
             sendAllPlayers(socket);
-            
+            sendAllBombs(socket);
             //we send ourselve to everyone including ourselves for us to be drawn          
             io.emit('new player',user);
 
@@ -77,8 +82,7 @@ io.on('connection', function(socket){
         }
     });
     
-    socket.on('move', function (user) {
-        
+    socket.on('move', function (user) {        
         //We do a first test for out of bounds, if its okey, we tell everyone the player moved
         //if(user.cooX<=gridX && user.cooX>0 &&user.cooY<=gridY && user.cooY>0){
             //console.log(user.pseudo+" just moved from "+user.oldX+"-"+user.oldY+" to "+user.cooX+"-"+user.cooY);
@@ -87,15 +91,43 @@ io.on('connection', function(socket){
             io.emit('move',user);
         //}
     });
+    
+    socket.on('new bomb',function(bomb){
+        console.log(bomb.cooX+"-"+bomb.cooY+"-"+bomb.power+"-"+bomb.time);
+        bombList.push(bomb);
+        io.emit('new bomb',bomb);
+    });
+    
+    
 });
 
-
-//useful function to make things shorter
+//launched every second the bomb verification
+Repeat(checkBombs).every(1, 's').start.now();
+    
 function sendAllPlayers(socket){
     userList.forEach(function (e,i,a) {
         socket.emit('new player', e.user);
     });
 }
+
+function sendAllBombs(socket){
+    bombList.forEach(function (e,i,a) {
+        console.log(bombList[i]);
+        socket.emit('new bomb', bombList[i]);
+    });
+}
 function getRandomInt(min,max){
     return Math.floor(Math.random()*(max-min))+min;
 }
+
+function checkBombs() {
+    bombList.forEach(function (e,i,a) {
+        if(bombList[i].time>0){
+            bombList[i].time-=1;
+        }else{
+            io.emit('bomb exploded',bombList[i]);
+            bombList.splice(i, 1);
+        }
+    });
+};
+ 

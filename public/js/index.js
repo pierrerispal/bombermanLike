@@ -23,6 +23,15 @@ socket.on('new player',function(user){
     drawUser(user);
 });
 
+//initialisation of the board game
+socket.on('init', function(send){
+    generateTable(send.gridX,send.gridY);
+    global_x=send.gridX;
+    global_y=send.gridY;
+    global_user=send.user;
+    logged=true;
+});
+
 socket.on('disconnect user', function(user){
     $('#messages').append($('<li>').text(user.pseudo+" just left"));
     eraseUser(user,true);
@@ -33,13 +42,14 @@ socket.on('move',function(user){
     eraseUser(user,false);
 });
 
-//initialisation of the board game
-socket.on('init', function(send){
-    generateTable(send.gridX,send.gridY);
-    global_x=send.gridX;
-    global_y=send.gridY;
-    global_user=send.user;
-    logged=true;
+socket.on('new bomb',function(bomb){
+    var idModif=bomb.cooX+"-"+bomb.cooY;
+    $('#'+idModif).addClass("bomb");
+    $('#'+idModif).removeClass("empty");
+});
+
+socket.on('bomb exploded',function(bomb){
+    
 });
 
 function generateTable(larg,long){
@@ -50,16 +60,21 @@ function generateTable(larg,long){
         for(var j=1; j<(larg+1);j++)
         {
             //@TODO: need to add the destructible walls
+            
             if(j%2==0 && i%2==0){
                 html+='<td class="undestructible wall" id="'+j+'-'+i+'"></td>';
+                //html+='<td class="undestructible wall" id="'+j+'-'+i+'">'+'<div style="width: 64px; height: 64px; position: relative;"></div>'+'</td>';
             }else{
                 html+='<td class="floor empty" id="'+j+'-'+i+'"></td>';
-            }            
+                //html+='<td class="floor empty" id="'+j+'-'+i+'">'+'<div style="width: 64px; height: 64px; position: relative;"></div>'+'</td>';
+            } 
+            html+='</div>';
         }
         html+='</tr>';
     }
     $('#table').prepend(html); 
 }
+
 function drawUser(user){
     var position='0';
     //need to check the direction
@@ -74,14 +89,12 @@ function drawUser(user){
         position='-128';
     }else{ 
         position=position;
-    }
-    
-    
+    }   
     var idModif=user.cooX+"-"+user.cooY;
     
-    //$('#'+idModif).css("background","url('../img/x64/"+user.char+".png') 0 0 no-repeat");
     $('#'+idModif).css("background","url('../img/x64/"+user.char+".png') "+position+"px 0px no-repeat");
-    //$('#'+idModif).css("background-position",position+"px 0px;")
+
+    //$('#'+idModif).addClass("char"); //@TODO: Will be used when the 6 chars will be 6 different classes :P
     $('#'+idModif).toggleClass('char empty');    
 }
 
@@ -91,7 +104,10 @@ function eraseUser(user,deco){
         user.cooY=user.oldY;
     }
     var idModif=user.cooX+"-"+user.cooY;  
-    $('#'+idModif).css("background","url('../img/x64/texture2.png') -64px 0 no-repeat");
+    //$('#'+idModif).css("background","url('../img/x64/texture2.png') -64px 0 no-repeat");
+    $('#'+idModif).prop("style",null);    
+    //$('#'+idModif).removeClass("char"); //@TODO: Will be used when the 6 chars will be 6 different classes :P
+    
     $('#'+idModif).toggleClass('char empty');
 }
 
@@ -110,6 +126,7 @@ function testClass(id,string){
     var classes = $('#'+id).attr('class');
     return (classes.indexOf(string)!=-1);
 }
+
 document.addEventListener('keydown',function(event) {
     if(event.keyCode==37 || event.keyCode == 81){
         if(logged){
@@ -119,9 +136,10 @@ document.addEventListener('keydown',function(event) {
             if(checkDestination(global_user.cooX-1,global_user.cooY)){
                 global_user.cooX=global_user.cooX-1;
                 socket.emit('move',global_user);
-            }
-            var idModif=global_user.cooX+"-"+global_user.cooY;
-            $('#'+idModif).css("background","url('../img/x64/"+global_user.char+".png') -192px 0px no-repeat");
+            }else{
+                var idModif=global_user.cooX+"-"+global_user.cooY;
+                $('#'+idModif).css("background","url('../img/x64/"+global_user.char+".png') -192px 0px no-repeat");
+            }            
         }        
     }else if(event.keyCode == 39 || event.keyCode == 68){
         if(logged){
@@ -131,9 +149,10 @@ document.addEventListener('keydown',function(event) {
             if(checkDestination(global_user.cooX+1,global_user.cooY)){
                 global_user.cooX=global_user.cooX+1;
                 socket.emit('move',global_user);
+            }else{
+                var idModif=global_user.cooX+"-"+global_user.cooY;
+                $('#'+idModif).css("background","url('../img/x64/"+global_user.char+".png') -64px 0px no-repeat");
             }
-            var idModif=global_user.cooX+"-"+global_user.cooY;
-            $('#'+idModif).css("background","url('../img/x64/"+global_user.char+".png') -64px 0px no-repeat");
         }        
     }else if(event.keyCode == 38 || event.keyCode == 90){
         if(logged){
@@ -143,9 +162,10 @@ document.addEventListener('keydown',function(event) {
             if(checkDestination(global_user.cooX,global_user.cooY-1)){
                 global_user.cooY=global_user.cooY-1;
                 socket.emit('move',global_user);
-            } 
-            var idModif=global_user.cooX+"-"+global_user.cooY;
-            $('#'+idModif).css("background","url('../img/x64/"+global_user.char+".png') -128px 0px no-repeat");
+            }else{
+                var idModif=global_user.cooX+"-"+global_user.cooY;
+                $('#'+idModif).css("background","url('../img/x64/"+global_user.char+".png') -128px 0px no-repeat");
+            }
         }        
     }else if(event.keyCode == 40 || event.keyCode == 83){
         if(logged){
@@ -155,10 +175,25 @@ document.addEventListener('keydown',function(event) {
             if(checkDestination(global_user.cooX,global_user.cooY+1)){
                 global_user.cooY=global_user.cooY+1;
                 socket.emit('move',global_user);
+            }else{
+                var idModif=global_user.cooX+"-"+global_user.cooY;
+                $('#'+idModif).css("background","url('../img/x64/"+global_user.char+".png') -0px 0px no-repeat");
             }
-            var idModif=global_user.cooX+"-"+global_user.cooY;
-            $('#'+idModif).css("background","url('../img/x64/"+global_user.char+".png') -0px 0px no-repeat");
-        }        
+        }   
+    }else if(event.keyCode == 13 || event.keyCode == 69){
+        if(logged){
+            //enter OR e pressed to drop a bomb
+            //need to check that there isnt already a bomb
+            if(!testClass(global_user.cooX+"-"+global_user.cooY,"bomb")){
+                var bomb={
+                 'cooX':global_user.cooX,
+                 'cooY':global_user.cooY,
+                 'power':global_user.power,
+                 'time':global_user.time
+                };
+                socket.emit('new bomb',bomb); 
+            }            
+        }   
     }
 }); 
 

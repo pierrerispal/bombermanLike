@@ -39,27 +39,23 @@ body {
     padding: 10px;
     border-radius: 2px;
 }
-
 #scene {
     display: none;
     top:10px;
     left : 10px;
     position: relative;
 }
-
 td{    
     width:64px;
     height:64px;
+    
 }
 tr,td,table{
     margin:0;
     padding:0;
     border-collapse: collapse;                
     margin-bottom: 10px;
-}
-.empty{
-    background:url('../img/x64/texture2.png') 0 0 no-repeat;
-    background-position: -64px 0px;
+    
 }
 #console{
     background-color: black;
@@ -67,6 +63,10 @@ tr,td,table{
     position: relative;
 }
 
+.empty{
+    background:url('../img/x64/texture2.png') 0 0 no-repeat;
+    background-position: -64px 0px;
+}
 .undestructible{
     background:url('../img/x64/texture2.png') 0 0 no-repeat;
     background-position: 0px 0px;
@@ -78,4 +78,12 @@ tr,td,table{
 .floor{
     background:url('../img/x64/texture2.png') 0 0 no-repeat;
     background-position: -64px 0px;
+}
+/*.char{
+    background:url('../img/x64/char1.png') 0 0 no-repeat;
+}*/
+.wall{
+}
+.bomb{
+    background:url('../img/x64/bomb.png') 0 0 no-repeat;
 }

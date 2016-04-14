@@ -55,8 +55,12 @@ tr,td,table{
     padding:0;
     border-collapse: collapse;                
     margin-bottom: 10px;
-    
 }
+
+#table{
+    display: inline-block;
+}
+
 #console{
     background-color: black;
     color: white;
@@ -115,4 +119,33 @@ tr,td,table{
 .con{
     position: relative;
     width: 64px; height: 64px
+}
+
+
+
+#list{
+    height: 30px;
+    background-color: grey;
+    width: 1600px;
+    display: inline-block;
+}
+
+/**
+ * player's profile
+ */
+
+#data{
+    width: 160px;
+    height: 240px;
+    display: inline-block;
+    margin: 0 10px;
+    background: grey;
+    position: absolute;
+    top:0;
+}
+
+#data #char{
+    height: 70px;
+    width: 60px;
+    margin: auto;
 }

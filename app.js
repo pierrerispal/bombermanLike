@@ -13,18 +13,14 @@ var gridX=25,
     userList = [],
     bombList=[],
     spectateurList=[];
-/*var textures = [
+var textures = [
     'char1',
     'char2',
     'char3',
     'char4',
     'char5',
     'char6'
-];*/
-var textures=[
-    'char1',
-    'char2'
-]
+];
 //Run the server
 server.listen(port, function () {
     console.log('Server listening at port %d', port);
@@ -75,7 +71,7 @@ io.on('connection', function(socket){
                 };
                 spectateurList.push(socket);                
             }
-            io.emit('new player',user);
+            socket.broadcast.emit('new player',user);
             //we send ourselve to everyone including ourselves for us to be drawn            
             socket.emit('init',info);            
             //we send to the client all the other players

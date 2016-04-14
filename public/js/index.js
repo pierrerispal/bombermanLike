@@ -23,10 +23,13 @@ socket.on('new player',function(user){
     if(user.player){
         var str=" as a player";
         drawUser(user);
+        $('#row').append('<td id="'+user.char+'">'
+                            +'<div id="list_pseudo">'+user.pseudo+'</div>'
+                            +'<div id="list_head" class="'+user.char+'"></div>'
+                            +'</td>');
     }else{
         var str=" as a spectator";
     }
-    $('#messages').append($('<li>').text(user.pseudo+" just joined"+str));    
 });
 
 //initialisation of the board game
@@ -37,6 +40,8 @@ socket.on('init', function(send){
     global_y=send.gridY;
     if(player){
         global_user=send.user;
+        $('#char').addClass(send.user.char);
+        $('#data_pseudo').append(send.user.pseudo);
         //console.log(global_user.char+global_user.cooX+global_user.cooY);
         //drawUser(global_user);
     }else{
@@ -45,8 +50,8 @@ socket.on('init', function(send){
 });
 
 socket.on('disconnect user', function(user){
-    $('#messages').append($('<li>').text(user.pseudo+" just left"));
     eraseUser(user,true);
+    $('#'+user.char).remove();
 });
 
 socket.on('move',function(user){

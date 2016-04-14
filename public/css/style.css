@@ -121,19 +121,44 @@ tr,td,table{
     width: 64px; height: 64px
 }
 
-
-
+/**
+ * List of players
+ */
 #list{
-    height: 30px;
+    height: 50px;
     background-color: grey;
-    width: 1600px;
+    width: 1602px;
     display: inline-block;
 }
-
+#player_list #list_pseudo{
+    min-width: 73px;
+    width: 73px;
+    min-height: 33px;
+    height: 33px;
+    margin-left:10px;
+    margin-top: 15px;
+    text-transform: uppercase;
+    float: left;
+}
+#player_list #list_head{
+    min-width: 64px;
+    width: 64px;
+    min-height: 48px;
+    height: 48px;
+    margin-left:93px;
+    background-position: 0px 0px !important;
+}
+#player_list td,th {
+    border: 1px solid black;
+}
+#player_list td{
+    height: 50px;
+    max-height: 50px;
+    width: 267px;
+}
 /**
  * player's profile
  */
-
 #data{
     width: 160px;
     height: 240px;
@@ -143,9 +168,19 @@ tr,td,table{
     position: absolute;
     top:0;
 }
-
+#data #data_pseudo{
+    width: 160px;
+    height: 30px;
+    margin: auto;
+    text-align: center;
+    font-family: cursive;
+    text-transform: uppercase;
+    font-size: 100%;
+    margin-top: 10px;
+}
 #data #char{
     height: 70px;
     width: 60px;
     margin: auto;
+    background-position: 0px 0px !important;
 }

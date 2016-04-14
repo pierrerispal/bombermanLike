@@ -45,11 +45,11 @@ body {
     left : 10px;
     position: relative;
 }
-td{    
+/*td{    
     width:64px;
     height:64px;
     
-}
+}*/
 tr,td,table{
     margin:0;
     padding:0;
@@ -63,27 +63,56 @@ tr,td,table{
     position: relative;
 }
 
-.empty{
-    background:url('../img/x64/texture2.png') 0 0 no-repeat;
-    background-position: -64px 0px;
-}
+
 .undestructible{
-    background:url('../img/x64/texture2.png') 0 0 no-repeat;
+    background:url('../img/x64/sprites/texture2.png') 0 0 no-repeat;
     background-position: 0px 0px;
 }
 .destructible{
-    background:url('../img/x64/texture2.png') 0 0 no-repeat;
+    background:url('../img/x64/sprites/texture2.png') 0 0 no-repeat;
     background-position: -128px 0px;
 }
 .floor{
-    background:url('../img/x64/texture2.png') 0 0 no-repeat;
+    background:url('../img/x64/sprites/texture2.png') 0 0 no-repeat;
     background-position: -64px 0px;
 }
-/*.char{
-    background:url('../img/x64/char1.png') 0 0 no-repeat;
-}*/
-.wall{
+.char1{
+    background:url('../img/x64/char/char1.png') 0 0 no-repeat;
+}
+.char2{
+    background:url('../img/x64/char/char2.png') 0 0 no-repeat;
+}
+.char3{
+    background:url('../img/x64/char/char3.png') 0 0 no-repeat;
+}
+.char4{
+    background:url('../img/x64/char/char4.png') 0 0 no-repeat;
+}
+.char5{
+    background:url('../img/x64/char/char5.png') 0 0 no-repeat;
+}
+.char6{
+    background:url('../img/x64/char/char6.png') 0 0 no-repeat;
 }
 .bomb{
-    background:url('../img/x64/bomb.png') 0 0 no-repeat;
+    background:url('../img/x64/sprites/a_bomb.png') 0 0 no-repeat;
+}
+.level1{
+    z-index: 1;
+    position: absolute;
+    width: 64px; height: 64px
+}
+.level2{
+    z-index: 5;
+    position: absolute;
+    width: 64px; height: 64px
+}
+.level3{
+    z-index: 10;
+    position: absolute;
+    width: 64px; height: 64px
+}
+.con{
+    position: relative;
+    width: 64px; height: 64px
 }

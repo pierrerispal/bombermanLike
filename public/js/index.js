@@ -1,9 +1,10 @@
 var socket = io(),
     chatTitle = "Bomberman",
-    logged=false,
+    player=false,
     global_user
     global_x=0,
-    global_y=0;
+    global_y=0,
+    global_direction=0;
 
 $('#login form').submit(function () {
     if($('#pseudo').val().trim()!=""){
@@ -19,17 +20,28 @@ $('#login form').submit(function () {
 });
 
 socket.on('new player',function(user){
-    $('#messages').append($('<li>').text(user.pseudo+" just joined"));
-    drawUser(user);
+    if(user.player){
+        var str=" as a player";
+        drawUser(user);
+    }else{
+        var str=" as a spectator";
+    }
+    $('#messages').append($('<li>').text(user.pseudo+" just joined"+str));    
 });
 
 //initialisation of the board game
 socket.on('init', function(send){
     generateTable(send.gridX,send.gridY);
+    player=send.user.player;
     global_x=send.gridX;
     global_y=send.gridY;
-    global_user=send.user;
-    logged=true;
+    if(player){
+        global_user=send.user;
+        //console.log(global_user.char+global_user.cooX+global_user.cooY);
+        //drawUser(global_user);
+    }else{
+        //do the spectateur thing
+    }    
 });
 
 socket.on('disconnect user', function(user){
@@ -44,13 +56,25 @@ socket.on('move',function(user){
 
 socket.on('new bomb',function(bomb){
     var idModif=bomb.cooX+"-"+bomb.cooY;
-    $('#'+idModif).addClass("bomb");
-    $('#'+idModif).removeClass("empty");
+    //$('#'+idModif).addClass("bomb");
+    //$('#'+idModif).removeClass("empty");
+    $('#'+idModif).children(".con").children(".level3").toggleClass('bomb empty');
 });
 
 socket.on('bomb exploded',function(bomb){
-    
+    var idModif=bomb.cooX+"-"+bomb.cooY;
+    $('#'+idModif).children(".con").children(".level3").toggleClass('bomb empty');
+    if(player){
+      bombExplosion(bomb);  
+    }    
 });
+
+function bombExplosion(bomb){
+    //need to add the rayon of the bomb
+    if((bomb.cooX==global_user.cooX) && (bomb.cooY=global_user.cooY)){
+        console.log("aie!");
+    }
+}
 
 function generateTable(larg,long){
     var html='';
@@ -62,10 +86,22 @@ function generateTable(larg,long){
             //@TODO: need to add the destructible walls
             
             if(j%2==0 && i%2==0){
-                html+='<td class="undestructible wall" id="'+j+'-'+i+'"></td>';
+                html+=  '<td id="'+j+'-'+i+'">'
+                        +'<div class="con">'
+                            +'<div class="level1 wall"></div>'
+                            +'<div class="level2 undestructible"></div>'
+                            +'<div class="level3 empty"></div>'
+                        +'</div>'
+                        +'</td>';
                 //html+='<td class="undestructible wall" id="'+j+'-'+i+'">'+'<div style="width: 64px; height: 64px; position: relative;"></div>'+'</td>';
             }else{
-                html+='<td class="floor empty" id="'+j+'-'+i+'"></td>';
+                html+=  '<td id="'+j+'-'+i+'">'
+                        +'<div class="con">'
+                            +'<div class="level1 floor"></div>'
+                            +'<div class="level2 empty"></div>'
+                            +'<div class="level3 empty"></div>'
+                        +'</div>'
+                        +'</td>';
                 //html+='<td class="floor empty" id="'+j+'-'+i+'">'+'<div style="width: 64px; height: 64px; position: relative;"></div>'+'</td>';
             } 
             html+='</div>';
@@ -92,10 +128,8 @@ function drawUser(user){
     }   
     var idModif=user.cooX+"-"+user.cooY;
     
-    $('#'+idModif).css("background","url('../img/x64/"+user.char+".png') "+position+"px 0px no-repeat");
-
-    //$('#'+idModif).addClass("char"); //@TODO: Will be used when the 6 chars will be 6 different classes :P
-    $('#'+idModif).toggleClass('char empty');    
+    $('#'+idModif).children(".con").children(".level2").toggleClass(user.char+' empty');
+    $('#'+idModif).children(".con").children(".level2").css("background-position",position+"px 0px");
 }
 
 function eraseUser(user,deco){
@@ -103,59 +137,62 @@ function eraseUser(user,deco){
         user.cooX=user.oldX;
         user.cooY=user.oldY;
     }
-    var idModif=user.cooX+"-"+user.cooY;  
-    //$('#'+idModif).css("background","url('../img/x64/texture2.png') -64px 0 no-repeat");
-    $('#'+idModif).prop("style",null);    
-    //$('#'+idModif).removeClass("char"); //@TODO: Will be used when the 6 chars will be 6 different classes :P
-    
-    $('#'+idModif).toggleClass('char empty');
+    var idModif=user.cooX+"-"+user.cooY;
+    $('#'+idModif).prop("style",null);
+    $('#'+idModif).children(".con").children(".level2").toggleClass(user.char+' empty');
 }
 
 function checkDestination(posX,posY){
     //first we check the with the bounds of the playground
     if(posX>=1 && posY >=1 && posX<=global_x && posY<=global_y){
         //then we need to check if the case is a wall or not
-        if(!testClass(posX+'-'+posY, 'wall')){
+        if(!testClass(posX+'-'+posY, 'wall','level1')){
             return true;
         }
     }
     return false;
 }
 
-function testClass(id,string){
-    var classes = $('#'+id).attr('class');
+function testClass(id,string,level){
+    //var classes = $('#'+id).attr('class');
+    var classes = $('#'+id).children(".con").children("."+level).attr('class');
     return (classes.indexOf(string)!=-1);
 }
 
 document.addEventListener('keydown',function(event) {
     if(event.keyCode==37 || event.keyCode == 81){
-        if(logged){
+        if(player){
             //left
+            global_direction=-192;
             global_user['oldX']=global_user.cooX;
             global_user['oldY']=global_user.cooY;
             if(checkDestination(global_user.cooX-1,global_user.cooY)){
                 global_user.cooX=global_user.cooX-1;
                 socket.emit('move',global_user);
             }else{
-                var idModif=global_user.cooX+"-"+global_user.cooY;
-                $('#'+idModif).css("background","url('../img/x64/"+global_user.char+".png') -192px 0px no-repeat");
+                $("."+global_user.char).css("background-position",global_direction+"px 0px");                   
+                //drawUser(global_user);
             }            
         }        
     }else if(event.keyCode == 39 || event.keyCode == 68){
-        if(logged){
+        if(player){
             //right
+            global_direction=-64;
             global_user['oldX']=global_user.cooX;
             global_user['oldY']=global_user.cooY;
             if(checkDestination(global_user.cooX+1,global_user.cooY)){
                 global_user.cooX=global_user.cooX+1;
                 socket.emit('move',global_user);
             }else{
-                var idModif=global_user.cooX+"-"+global_user.cooY;
-                $('#'+idModif).css("background","url('../img/x64/"+global_user.char+".png') -64px 0px no-repeat");
+                //var idModif=global_user.cooX+"-"+global_user.cooY;
+                //$('#'+idModif).css("background","url('../img/x64/"+global_user.char+".png') -64px 0px no-repeat");
+                $("."+global_user.char).css("background-position",global_direction+"px 0px");                   
+                //drawUser(global_user);
             }
         }        
     }else if(event.keyCode == 38 || event.keyCode == 90){
-        if(logged){
+        if(player){
+            global_direction=-128;
             //up
             global_user['oldX']=global_user.cooX;
             global_user['oldY']=global_user.cooY;
@@ -163,28 +200,33 @@ document.addEventListener('keydown',function(event) {
                 global_user.cooY=global_user.cooY-1;
                 socket.emit('move',global_user);
             }else{
-                var idModif=global_user.cooX+"-"+global_user.cooY;
-                $('#'+idModif).css("background","url('../img/x64/"+global_user.char+".png') -128px 0px no-repeat");
+                //var idModif=global_user.cooX+"-"+global_user.cooY;
+                //$('#'+idModif).css("background","url('../img/x64/"+global_user.char+".png') -128px 0px no-repeat");
+                $("."+global_user.char).css("background-position",global_direction+"px 0px");             
+                //drawUser(global_user);                
             }
         }        
     }else if(event.keyCode == 40 || event.keyCode == 83){
-        if(logged){
+        if(player){
             //down
+            global_direction=0;
             global_user['oldX']=global_user.cooX;
             global_user['oldY']=global_user.cooY;
             if(checkDestination(global_user.cooX,global_user.cooY+1)){
                 global_user.cooY=global_user.cooY+1;
                 socket.emit('move',global_user);
             }else{
-                var idModif=global_user.cooX+"-"+global_user.cooY;
-                $('#'+idModif).css("background","url('../img/x64/"+global_user.char+".png') -0px 0px no-repeat");
+                //var idModif=global_user.cooX+"-"+global_user.cooY;
+                //$('#'+idModif).css("background","url('../img/x64/"+global_user.char+".png') -0px 0px no-repeat");
+                $("."+global_user.char).css("background-position",global_direction+"px 0px");                
+                //drawUser(global_user);
             }
         }   
     }else if(event.keyCode == 13 || event.keyCode == 69){
-        if(logged){
+        if(player){
             //enter OR e pressed to drop a bomb
             //need to check that there isnt already a bomb
-            if(!testClass(global_user.cooX+"-"+global_user.cooY,"bomb")){
+            if(!testClass(global_user.cooX+"-"+global_user.cooY,"bomb",'level3')){
                 var bomb={
                  'cooX':global_user.cooX,
                  'cooY':global_user.cooY,

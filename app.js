@@ -11,8 +11,20 @@ var express = require('express'),
 var gridX=25,
     gridY=13,
     userList = [],
-    bombList=[];
-
+    bombList=[],
+    spectateurList=[];
+/*var textures = [
+    'char1',
+    'char2',
+    'char3',
+    'char4',
+    'char5',
+    'char6'
+];*/
+var textures=[
+    'char1',
+    'char2'
+]
 //Run the server
 server.listen(port, function () {
     console.log('Server listening at port %d', port);
@@ -20,54 +32,55 @@ server.listen(port, function () {
 //setting the route for accessing other files
 app.use(express.static(__dirname + '/public'));
 
+
 //NEW CONNECTION
 io.on('connection', function(socket){
     console.log("new player connected");
 
     socket.on('connect user', function(user){
-        if(user.pseudo!="" && user.pseudo!=""){
-            console.log(user.pseudo+" just joined the game");
-            //at this point the user only have a nickname so we need to give him new propreties
-            var textures = [
-                'char1',
-                'char2',
-                'char3',
-                'char4',
-                'char5',
-                'char6'
-            ];
-            //var textures = ['char1'];
-            
-            var posX=2;
-            var posY=2;
-            while(posX%2==0 && posY%2==0){
-                posX=getRandomInt(1,gridX);
-                posY=getRandomInt(1,gridY);
+        if(user.pseudo!="" && user.pseudo!=""){           
+            texture=textures[0];
+            if(texture){
+                console.log(user.pseudo+" just joined the game"); 
+                var posX=2;
+                var posY=2;
+                while(posX%2==0 && posY%2==0){
+                    posX=getRandomInt(1,gridX);
+                    posY=getRandomInt(1,gridY);
+                }
+                user["cooX"]=posX;
+                user["cooY"]=posY;
+                textures.shift();
+                user["power"]=1;
+                user["time"]=2;
+                user["life"]=3;
+                user["player"]=true;
+                user["char"]=texture;
+                socket.user = user;
+                
+                var info = {
+                    gridX:gridX,
+                    gridY:gridY,
+                    user:socket.user};                
+                //we add the player in the player list
+                userList.push(socket);
+            }else{
+                console.log(user.pseudo+" just joined as spectator"); 
+                user["player"]=false;
+                socket.user = user;
+                var info={
+                   gridX:gridX,
+                   gridY:gridY,
+                   user:socket.user
+                };
+                spectateurList.push(socket);                
             }
-            
-            texture=getRandomInt(0,textures.length);
-            user["cooX"]=posX;
-            user["cooY"]=posY;
-            user["char"]=textures[texture];
-            user["power"]=1;
-            user["time"]=2;
-            
-            socket.user = user;
-            //the init draw the play grid
-            var info = {
-                gridX:gridX,
-                gridY:gridY,
-                user:socket.user};
-            socket.emit('init',info);
-            
+            io.emit('new player',user);
+            //we send ourselve to everyone including ourselves for us to be drawn            
+            socket.emit('init',info);            
             //we send to the client all the other players
             sendAllPlayers(socket);
             sendAllBombs(socket);
-            //we send ourselve to everyone including ourselves for us to be drawn          
-            io.emit('new player',user);
-
-            //we add the player in the player list
-            userList.push(socket);
         }
     });
 
@@ -75,9 +88,10 @@ io.on('connection', function(socket){
         console.log("someone just left");
         //if user is connected
         if(socket.user!=null){
+            //@TODO: handle when the spec leave
             var i = userList.indexOf(socket);
             userList.splice(i, 1);
-            
+            textures.push(socket.user.char);
             io.emit('disconnect user',socket.user);
         }
     });
@@ -93,7 +107,6 @@ io.on('connection', function(socket){
     });
     
     socket.on('new bomb',function(bomb){
-        console.log(bomb.cooX+"-"+bomb.cooY+"-"+bomb.power+"-"+bomb.time);
         bombList.push(bomb);
         io.emit('new bomb',bomb);
     });

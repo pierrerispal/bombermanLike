@@ -1,10 +1,12 @@
 var socket = io(),
     chatTitle = "Bomberman",
     player=false,
-    global_user
+    global_user,
+    currentBomb=false;
     global_x=0,
     global_y=0,
     global_direction=0;
+    //@TODO: transform the current bomb in a list because a player can put more than 1 at a time
 
 $('#login form').submit(function () {
     if($('#pseudo').val().trim()!=""){
@@ -74,7 +76,37 @@ socket.on('bomb exploded',function(bomb){
     }    
 });
 
+socket.on('new wall',function(string){
+    $('#'+string).children(".con").children(".level1").toggleClass('floor wall');
+    $('#'+string).children(".con").children(".level2").toggleClass('empty destructible');  
+});
+
 function bombExplosion(bomb){
+    if((currentBomb.cooX==bomb.cooX) && (currentBomb.cooY==bomb.cooY)){
+        currentBomb=false;
+    }
+    for(var i=bomb.cooX-1;i<=bomb.cooX+1;i++){
+        var j=bomb.cooY;
+        if(i<1 || j<1 || i>global_x || j>global_y){
+        }else{
+            if(testClass(i+"-"+j,'destructible','level2')){
+                $('#'+i+"-"+j).children(".con").children(".level1").toggleClass('floor wall');
+                $('#'+i+"-"+j).children(".con").children(".level2").toggleClass('destructible empty');
+                console.log(i+"-"+j);
+            }
+        }
+    }
+    for(var j=bomb.cooY-1;j<=bomb.cooY+1;j++){
+        var i=bomb.cooX;
+        if(i<1 || j<1 || i>global_x || j>global_y){
+        }else{
+            if(testClass(i+"-"+j,'destructible','level2')){
+                console.log(i+"-"+j);
+                $('#'+i+"-"+j).children(".con").children(".level1").toggleClass('floor wall');
+                $('#'+i+"-"+j).children(".con").children(".level2").toggleClass('destructible empty');
+            }
+        }
+    }
     //need to add the rayon of the bomb
     if((bomb.cooX==global_user.cooX) && (bomb.cooY=global_user.cooY)){
         console.log("aie!");
@@ -82,6 +114,7 @@ function bombExplosion(bomb){
 }
 
 function generateTable(larg,long){
+    
     var html='';
     for(var i=1; i<(long+1);i++)
     {
@@ -94,7 +127,7 @@ function generateTable(larg,long){
                 html+=  '<td id="'+j+'-'+i+'">'
                         +'<div class="con">'
                             +'<div class="level1 wall"></div>'
-                            +'<div class="level2 undestructible"></div>'
+                            +'<div class="level2 hard"></div>'
                             +'<div class="level3 empty"></div>'
                         +'</div>'
                         +'</td>';
@@ -231,15 +264,18 @@ document.addEventListener('keydown',function(event) {
         if(player){
             //enter OR e pressed to drop a bomb
             //need to check that there isnt already a bomb
-            if(!testClass(global_user.cooX+"-"+global_user.cooY,"bomb",'level3')){
-                var bomb={
-                 'cooX':global_user.cooX,
-                 'cooY':global_user.cooY,
-                 'power':global_user.power,
-                 'time':global_user.time
-                };
-                socket.emit('new bomb',bomb); 
-            }            
+            if(!currentBomb){
+                if(!testClass(global_user.cooX+"-"+global_user.cooY,"bomb",'level3')){
+                    var bomb={
+                     'cooX':global_user.cooX,
+                     'cooY':global_user.cooY,
+                     'power':global_user.power,
+                     'time':global_user.time
+                    };
+                    socket.emit('new bomb',bomb); 
+                    currentBomb=bomb;
+                }
+            }
         }   
     }
 }); 
